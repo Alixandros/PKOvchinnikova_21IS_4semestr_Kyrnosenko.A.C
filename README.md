@@ -23,7 +23,7 @@
 | 2 | **Ларетина Дарья Алексеевна** | [Al-Daria](https://github.com/Al-Daria/PKOvchinnikova_21IS_4semestr_Laretina) |
 | 3 | **Малиневский Егор Сергеевич** | [Leendeseqy](https://github.com/Leendeseqy/PKOvchinnikova_21IS_4semestr_Malinevskiy) |
 | 4 | **Микштас Артурас Мариусо** | [Mrkirk1](https://github.com/Mrkirk1/PKOvchinnikova_21IS_4semestr_Mikshtas) |
-| 5 | **Мирошкин Егор Денисович** | [⏳В Процессе...⏳]() |
+| 5 | **Мирошкин Егор Денисович** | [SWaT-137](https://github.com/SWaT-137/PKOvchinnikova_21IS_4semestr_Miroshkin) |
 | 6 | **Поздняков Владимир Романович** | [Voviy-ux](https://github.com/Voviy-ux/PKOvchinnikova_21IS_PozdnyakovVR) |
 | 7 | **Поздняков Дмитрий Романович** | [Mitya1606](https://github.com/Mitya1606/PKOvchinnikova_21IS_4semestr_PozdnyakovD) |
 | 8 | **Полсачев Матвей Анатольевич** | [⏳В Процессе...⏳]() |
