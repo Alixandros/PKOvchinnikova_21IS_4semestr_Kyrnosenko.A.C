@@ -666,7 +666,6 @@ edugrader/
 │   │       ├── file_handlers.py
 │   │       └── notifications.py
 │   ├── requirements.txt
-│   ├── Dockerfile
 │   └── .env.example
 ├── frontend/
 │   ├── public/
@@ -686,7 +685,6 @@ edugrader/
 │   │   │   └── AuthContext.js
 │   │   └── utils/
 │   ├── package.json
-│   └── Dockerfile
 └── docker-compose.yml          
 ```
 
