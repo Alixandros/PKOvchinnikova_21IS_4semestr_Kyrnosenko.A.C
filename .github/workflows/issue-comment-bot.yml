@@ -1,0 +1,34 @@
+name: Issue Comment Bot
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  handle-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Placeholder bot action
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          COMMENT_AUTHOR: ${{ github.event.comment.user.login }}
+        run: |
+          python - <<'PY'
+          import os
+          print("Issue comment received")
+          print(f"author={os.getenv('COMMENT_AUTHOR')}")
+          print(f"body={os.getenv('COMMENT_BODY')}")
+          # TODO: replace placeholder with real bot logic
+          PY
