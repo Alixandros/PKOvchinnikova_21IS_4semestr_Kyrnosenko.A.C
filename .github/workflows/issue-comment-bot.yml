@@ -3,13 +3,16 @@ name: Issue Comment Bot
 on:
   issue_comment:
     types: [created]
+  push:
+    branches:
+      - "**"
 
 permissions:
   contents: read
 
 jobs:
   dispatch-to-master:
-    if: ${{ github.event.issue.pull_request == null }}
+    if: ${{ github.event_name == 'issue_comment' && github.event.issue.pull_request == null }}
     runs-on: ubuntu-latest
     steps:
       - name: Send repository_dispatch to master repo
@@ -24,6 +27,7 @@ jobs:
             const repo = process.env.MASTER_REPO || 'EDUAI2026AgentMaster001';
 
             const payload = {
+              _dispatch_event: 'issue_comment_event',
               action: context.payload.action,
               repository: {
                 owner: { login: context.repo.owner },
@@ -47,5 +51,44 @@ jobs:
               owner,
               repo,
               event_type: 'issue_comment_event',
+              client_payload: payload,
+            });
+
+  dispatch-push-to-master:
+    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send push repository_dispatch to master repo
+        uses: actions/github-script@v7
+        env:
+          MASTER_OWNER: ${{ vars.MASTER_OWNER }}
+          MASTER_REPO: ${{ vars.MASTER_REPO }}
+        with:
+          github-token: ${{ secrets.ORG_BOT_PAT }}
+          script: |
+            const owner = process.env.MASTER_OWNER || 'PKO001Classroom';
+            const repo = process.env.MASTER_REPO || 'EDUAI2026AgentMaster001';
+
+            const payload = {
+              _dispatch_event: 'repo_push_event',
+              repository: {
+                owner: { login: context.repo.owner },
+                name: context.repo.repo
+              },
+              ref: context.payload.ref || '',
+              before: context.payload.before || '',
+              after: context.payload.after || '',
+              compare: context.payload.compare || '',
+              pusher: {
+                name: context.payload.pusher?.name || ''
+              },
+              head_commit: context.payload.head_commit || {},
+              commits: context.payload.commits || []
+            };
+
+            await github.request('POST /repos/{owner}/{repo}/dispatches', {
+              owner,
+              repo,
+              event_type: 'repo_push_event',
               client_payload: payload,
             });
