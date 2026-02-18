@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EduGrader Ручной тест</title>
+    <style>
+        body { font-family: Arial; padding: 20px; max-width: 800px; margin: 0 auto; background: #f0f2f5; }
+        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .info { background: #e7f3ff; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #1a73e8; }
+        input, select, button { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { background: #1a73e8; color: white; border: none; cursor: pointer; font-size: 16px; }
+        button:hover { background: #1557b0; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 8px; overflow: auto; }
+        .endpoint-input { background: #f0f7ff; padding: 10px; border-radius: 8px; margin: 10px 0; }
+        .success { background: #d4edda; color: #155724; padding: 12px; border-radius: 8px; }
+        .error { background: #f8d7da; color: #721c24; padding: 12px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 EduGrader Ручной тест API</h1>
+        
+        <div class="info">
+            <strong>📌 Инструкция:</strong>
+            <ol>
+                <li>Откройте <a href="http://127.0.0.1:8000/docs" target="_blank">http://127.0.0.1:8000/docs</a></li>
+                <li>Посмотрите, какие там есть пути (например: /api/register, /auth/register, /register)</li>
+                <li>Введите эти пути в поля ниже</li>
+            </ol>
+        </div>
+
+        <div class="endpoint-input">
+            <h3>🔐 Регистрация</h3>
+            <label>Путь для регистрации (из Swagger):</label>
+            <input type="text" id="registerPath" placeholder="/api/register или /register или /auth/register" value="/register">
+            
+            <input type="email" id="email" placeholder="Email" value="test@example.com">
+            <input type="text" id="username" placeholder="Username" value="testuser">
+            <input type="text" id="fullname" placeholder="Full Name" value="Тестовый Пользователь">
+            <input type="password" id="password" placeholder="Password" value="password123">
+            <select id="role">
+                <option value="student">Студент</option>
+                <option value="teacher">Преподаватель</option>
+            </select>
+            <button onclick="register()">Зарегистрироваться</button>
+        </div>
+
+        <div class="endpoint-input">
+            <h3>🔑 Вход</h3>
+            <label>Путь для входа (из Swagger):</label>
+            <input type="text" id="loginPath" placeholder="/api/token или /token или /login" value="/token">
+            
+            <input type="text" id="login_username" placeholder="Username" value="testuser">
+            <input type="password" id="login_password" placeholder="Password" value="password123">
+            <button onclick="login()">Войти</button>
+        </div>
+
+        <div class="endpoint-input">
+            <h3>📋 Тестовый запрос</h3>
+            <label>Метод:</label>
+            <select id="method">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+            </select>
+            
+            <label>Путь:</label>
+            <input type="text" id="testPath" placeholder="/some/path" value="/">
+            
+            <label>Тело запроса (JSON, если POST):</label>
+            <textarea id="testBody" rows="4" placeholder='{"key": "value"}'></textarea>
+            
+            <button onclick="testRequest()">Выполнить запрос</button>
+        </div>
+
+        <h3>📊 Результат</h3>
+        <pre id="result">Ожидание действия...</pre>
+
+        <h3>📡 Информация о сервере</h3>
+        <pre id="serverInfo"></pre>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://127.0.0.1:8000';
+
+        // Пробуем получить корневой путь для проверки
+        window.onload = async () => {
+            try {
+                const response = await fetch(BASE_URL);
+                const text = await response.text();
+                document.getElementById('serverInfo').textContent = 
+                    `Сервер отвечает на корневой путь (${BASE_URL}):\n${text.substring(0, 500)}...`;
+            } catch (error) {
+                document.getElementById('serverInfo').textContent = 
+                    `Ошибка при подключении к серверу: ${error}`;
+            }
+        };
+
+        async function register() {
+            const path = document.getElementById('registerPath').value;
+            const url = BASE_URL + path;
+            
+            const data = {
+                email: document.getElementById('email').value,
+                username: document.getElementById('username').value,
+                full_name: document.getElementById('fullname').value,
+                password: document.getElementById('password').value,
+                role: document.getElementById('role').value
+            };
+            
+            await makeRequest('POST', url, data);
+        }
+
+        async function login() {
+            const path = document.getElementById('loginPath').value;
+            const url = BASE_URL + path;
+            
+            const formData = new URLSearchParams();
+            formData.append('username', document.getElementById('login_username').value);
+            formData.append('password', document.getElementById('login_password').value);
+            
+            try {
+                const resultEl = document.getElementById('result');
+                resultEl.textContent = '⏳ Отправка запроса...';
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                resultEl.textContent = JSON.stringify({
+                    status: response.status,
+                    statusText: response.statusText,
+                    url: url,
+                    data: result
+                }, null, 2);
+                
+            } catch (error) {
+                document.getElementById('result').textContent = '❌ Ошибка: ' + error;
+            }
+        }
+
+        async function testRequest() {
+            const method = document.getElementById('method').value;
+            const path = document.getElementById('testPath').value;
+            const url = BASE_URL + path;
+            const body = document.getElementById('testBody').value;
+            
+            await makeRequest(method, url, body ? JSON.parse(body) : null);
+        }
+
+        async function makeRequest(method, url, data) {
+            const resultEl = document.getElementById('result');
+            resultEl.textContent = '⏳ Отправка запроса...';
+            
+            const options = {
+                method: method,
+                headers: {}
+            };
+            
+            if (data) {
+                if (method === 'POST' && url.includes('token')) {
+                    options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                    options.body = new URLSearchParams(data);
+                } else {
+                    options.headers['Content-Type'] = 'application/json';
+                    options.body = JSON.stringify(data);
+                }
+            }
+            
+            try {
+                console.log('Request:', { url, options });
+                
+                const response = await fetch(url, options);
+                
+                let responseData;
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    responseData = await response.json();
+                } else {
+                    responseData = await response.text();
+                }
+                
+                resultEl.textContent = JSON.stringify({
+                    status: response.status,
+                    statusText: response.statusText,
+                    url: url,
+                    headers: Object.fromEntries(response.headers.entries()),
+                    data: responseData
+                }, null, 2);
+                
+            } catch (error) {
+                resultEl.textContent = '❌ Ошибка: ' + error + '\n\nURL: ' + url;
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
