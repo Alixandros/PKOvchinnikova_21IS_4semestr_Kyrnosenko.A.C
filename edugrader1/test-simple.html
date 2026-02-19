@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Test</title>
+</head>
+<body>
+    <h2>Простой тест API</h2>
+    <button onclick="testRoot()">Тест корневого пути</button>
+    <button onclick="testRegister()">Тест регистрации</button>
+    <pre id="result"></pre>
+
+    <script>
+        const BASE_URL = 'http://localhost:8000';
+        
+        async function testRoot() {
+            try {
+                const res = await fetch(BASE_URL);
+                const text = await res.text();
+                document.getElementById('result').innerText = text;
+            } catch (e) {
+                document.getElementById('result').innerText = 'Ошибка: ' + e;
+            }
+        }
+        
+        async function testRegister() {
+            const data = {
+                email: 'test@example.com',
+                username: 'testuser',
+                full_name: 'Test User',
+                password: 'password123',
+                role: 'student'
+            };
+            
+            try {
+                const res = await fetch(BASE_URL + '/api/auth/register', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                document.getElementById('result').innerText = JSON.stringify(result, null, 2);
+            } catch (e) {
+                document.getElementById('result').innerText = 'Ошибка: ' + e;
+            }
+        }
+    </script>
+</body>
+</html>
