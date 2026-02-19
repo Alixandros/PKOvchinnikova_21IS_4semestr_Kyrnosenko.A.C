@@ -139,8 +139,8 @@
 
 ---
 
-### 2. [Архитектурная документация](./docs/requirements/architecure-documentation.md)
-**Файл:** `./docs/requirements/architecure-documentation.md`
+### 2. [Архитектурная документация](./docs/requirements/architectural-documentation.md)
+**Файл:** `./docs/requirements/architectural-documentation.md`
 **Описание:** Подробное описание архитектуры системы, компонентов и их взаимодействия.
 
 **Содержание:**
@@ -204,8 +204,8 @@
 
 ---
 
-### 3. [Техническое задание](./docs/requirements/technical-spacification.md)
-**Файл:** `./docs/requirements/technical-spacification.md`
+### 3. [Техническое задание](./docs/requirements/technical-specification.md)
+**Файл:** `./docs/requirements/technical-specification.md`
 **Описание:** Детальные технические требования к системе, интерфейсы и критерии приемки.
 
 **Содержание:**
