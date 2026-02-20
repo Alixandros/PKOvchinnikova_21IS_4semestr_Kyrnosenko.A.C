@@ -367,47 +367,48 @@
             <div class="tab" onclick="showTab('admin')" id="tabAdmin" style="display: none;">⚙️ Управление</div>
         </div>
 
-        <!-- Вкладка авторизации -->
-        <div id="auth" class="tab-content active">
-            <div class="auth-container">
-                <h2>🔐 Добро пожаловать в EduGrader</h2>
-                
-                <div class="form-group">
-                    <label>Имя пользователя</label>
-                    <input type="text" id="authUsername" placeholder="Введите имя">
-                </div>
-                
-                <div class="form-group">
-                    <label>Пароль</label>
-                    <input type="password" id="authPassword" placeholder="Введите пароль">
-                </div>
-                
-                <div class="form-group">
-                    <label>Выберите действие</label>
-                    <select id="authAction">
-                        <option value="login">Войти</option>
-                        <option value="register">Зарегистрироваться</option>
-                    </select>
-                </div>
-                
-                <div class="form-group" id="roleSelect" style="display: none;">
-                    <label>Роль</label>
-                    <select id="registerRole">
-                        <option value="student">Студент</option>
-                        <option value="teacher">Преподаватель</option>
-                    </select>
-                </div>
-                
-                <button class="btn btn-primary" onclick="handleAuth()">Продолжить</button>
-                
-                <div style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px;">
-                    <p><strong>Тестовые аккаунты:</strong></p>
-                    <p>👨‍🎓 Студент: student / 123</p>
-                    <p>👨‍🏫 Преподаватель: teacher / 123</p>
-                    <p>👨‍💼 Админ: admin / 123</p>
-                </div>
-            </div>
+<!-- Вкладка авторизации -->
+<div id="auth" class="tab-content active">
+    <div class="auth-container">
+        <h2>🔐 Добро пожаловать в EduGrader</h2>
+        
+        <div class="form-group">
+            <label>Имя пользователя</label>
+            <input type="text" id="authUsername" placeholder="Введите имя">
         </div>
+        
+        <div class="form-group">
+            <label>Пароль</label>
+            <input type="password" id="authPassword" placeholder="Введите пароль">
+        </div>
+        
+        <div class="form-group">
+            <label>Выберите действие</label>
+            <select id="authAction">
+                <option value="login">Войти</option>
+                <option value="register">Зарегистрироваться</option>
+            </select>
+        </div>
+        
+        <div class="form-group" id="roleSelect" style="display: none;">
+            <label>Роль</label>
+            <select id="registerRole">
+                <option value="student">Студент</option>
+                <option value="teacher">Преподаватель</option>
+                <option value="admin">Администратор</option>
+            </select>
+        </div>
+        
+        <button class="btn btn-primary" onclick="handleAuth()">Продолжить</button>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px;">
+            <p><strong>Тестовые аккаунты:</strong></p>
+            <p>👨‍🎓 Студент: student / 123</p>
+            <p>👨‍🏫 Преподаватель: teacher / 123</p>
+            <p>👨‍💼 Админ: admin / 123</p>
+        </div>
+    </div>
+</div>
 
         <!-- Вкладка курсов -->
         <div id="courses" class="tab-content">
