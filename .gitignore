@@ -13,6 +13,7 @@ env/
 
 # Database
 *.db
+*.db[cod]
 *.sqlite3
 
 # IDE
