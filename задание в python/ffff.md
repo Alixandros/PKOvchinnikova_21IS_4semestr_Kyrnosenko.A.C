@@ -82,11 +82,11 @@ def get_all_movies(sort_by='watch_date'):
         """
 
         cursor.execute(query)
-        workouts = cursor.fetchall()
-        return workouts
+        movies = cursor.fetchall()
+        return movies
 
     except psycopg2.Error as e:
-        print(f"Ошибка при получении списка фильмов(прости прости): {e}")
+        print(f"Ошибка при получении списка фильмов: {e}")
         return []
     finally:
         cursor.close()
@@ -170,7 +170,7 @@ def update_movie(log_id, new_rating, new_review):
         cursor.close()
         conn.close()
 
-def delete_workout(workout_id):
+def delete_movie(movie_id):
     conn = connect_db()
     if not conn:
         return False
@@ -179,14 +179,14 @@ def delete_workout(workout_id):
 
     try:
         query = "DELETE FROM movie_logs WHERE id = %s;"
-        cursor.execute(query, (workout_id,))
+        cursor.execute(query, (movie_id,))
 
         if cursor.rowcount == 0:
-            print(f"Фильм с ID {workout_id} не найдена")
+            print(f"Фильм с ID {movie_id} не найден")
             return False
 
         conn.commit()
-        print(f"Фильм ID {workout_id} удалена")
+        print(f"Фильм ID {movie_id} удален")
         return True
 
     except psycopg2.Error as e:
@@ -208,23 +208,23 @@ def get_cinema_stats():
         stats = {}
 
         cursor.execute("SELECT COUNT(*) FROM movie_logs;")
-        stats['total_movies'] = cursor.fetchone()[0]  # ИСПРАВЛЕНО: total_movies
+        stats['total_movies'] = cursor.fetchone()[0]
 
         if stats['total_movies'] > 0:
             cursor.execute("SELECT AVG(rating) FROM movie_logs;")
             avg = cursor.fetchone()[0]
-            stats['average_rating'] = round(avg, 2) if avg else 0  # ИСПРАВЛЕНО: average_rating
+            stats['average_rating'] = round(avg, 2) if avg else 0
 
             cursor.execute("SELECT SUM(duration_min) FROM movie_logs;")
             total_minutes = cursor.fetchone()[0]
-            stats['total_hours'] = round(total_minutes / 60, 2) if total_minutes else 0  # ИСПРАВЛЕНО: total_hours
+            stats['total_hours'] = round(total_minutes / 60, 2) if total_minutes else 0
 
             cursor.execute("""
                 SELECT genre, COUNT(*) FROM movie_logs
                 GROUP BY genre ORDER BY COUNT(*) DESC LIMIT 1;
             """)
             popular = cursor.fetchone()
-            stats['popular_genre'] = popular[0] if popular else 'Нет данных'  # ИСПРАВЛЕНО: popular_genre
+            stats['popular_genre'] = popular[0] if popular else 'Нет данных'
         else:
             stats['average_rating'] = 0
             stats['total_hours'] = 0
@@ -238,6 +238,21 @@ def get_cinema_stats():
     finally:
         cursor.close()
         conn.close()
+
+# ДОБАВЛЕНА ФУНКЦИЯ print_movies
+def print_movies(movies):
+    if not movies:
+        print('Пора начать смотреть кино!')
+        return
+    
+    print("\nСписок фильмов:")
+    print("-" * 50)
+    for movie in movies:
+        # movie: (id, title, watch_date, duration_min, rating, genre, review)
+        print(f"{movie[1]} ({movie[2]}) - Оценка: {movie[4]}/10")
+        print(f"  Жанр: {movie[5]}, Длительность: {movie[3]} мин")
+        print(f"  Отзыв: {movie[6]}")
+        print("-" * 50)
 
 def main():
     while True:
@@ -259,7 +274,6 @@ def main():
             genre = input('Жанр (Боевик, Комедия, Драма, Фантастика, Другое): ')
             review = input('Отзыв: ')
             add_movie(title, watch_date, duration, rating, genre, review)
-            print('Фильм добавлен')
         elif choice == '2':
             movies = get_all_movies()
             print_movies(movies)
@@ -276,58 +290,21 @@ def main():
             new_r = int(input('Новая оценка: '))
             new_rev = input('Новый отзыв: ')
             update_movie(log_id, new_r, new_rev)
-            print('Обновлено')
         elif choice == '6':
             log_id = int(input('ID фильма для удаления: '))
             delete_movie(log_id)
-            print('Удалено')
         elif choice == '7':
             stats = get_cinema_stats()
-            print(f"Всего фильмов: {stats.get('count', 0)}")
-            print(f"Средняя оценка: {stats.get('avg_rating', 0)}")
-            print(f"Время в часах: {stats.get('total_hours', 0)}")
-            print(f"Популярный жанр: {stats.get('popular_genre', 'Нет данных')}")
+            print("\nСТАТИСТИКА:")
+            print(f"  Всего фильмов: {stats.get('total_movies', 0)}")
+            print(f"  Средняя оценка: {stats.get('average_rating', 0)}")
+            print(f"  Время в часах: {stats.get('total_hours', 0)}")
+            print(f"  Популярный жанр: {stats.get('popular_genre', 'Нет данных')}")
         elif choice == '8':
+            print('До свидания!')
             break
         else:
             print('Неверный ввод')
 
 if __name__ == '__main__':
     main()
-"C:\Program Files\Python313\python.exe" C:\Users\Student\Desktop\PythonProject32\movie-tracker1.py 
-
-1. Добавить фильм
-2. Показать все фильмы
-3. Поиск по названию
-4. Фильтр по рейтингу
-5. Обновить фильм
-6. Удалить фильм
-7. Статистика
-8. Выход
-Выберите пункт: 7
-База фильмов подключена
-Всего фильмов: 0
-Средняя оценка: 0
-Время в часах: 10.82
-Популярный жанр: Другое
-
-1. Добавить фильм
-2. Показать все фильмы
-3. Поиск по названию
-4. Фильтр по рейтингу
-5. Обновить фильм
-6. Удалить фильм
-7. Статистика
-8. Выход
-Выберите пункт: 2
-База фильмов подключена
-Traceback (most recent call last):
-  File "C:\Users\Student\Desktop\PythonProject32\movie-tracker1.py", line 296, in <module>
-    main()
-    ~~~~^^
-  File "C:\Users\Student\Desktop\PythonProject32\movie-tracker1.py", line 265, in main
-    print_movies(movies)
-    ^^^^^^^^^^^^
-NameError: name 'print_movies' is not defined
-
-Process finished with exit code 1
